@@ -34,13 +34,14 @@ fn main() {
 
 fn on_submit(s: &mut Cursive, name: &str) {
     s.pop_layer();
-    s.add_layer(Dialog::text(format!("Name: {}\nAwesome: yes", name))
-        .title(format!("{}'s info", name))
-        .button("Quit", Cursive::quit));
+    s.add_layer(
+        Dialog::text(format!("Name: {}\nAwesome: yes", name))
+            .title(format!("{}'s info", name))
+            .button("Quit", Cursive::quit),
+    );
 }
 
 fn add_name(s: &mut Cursive) {
-
     fn ok(s: &mut Cursive, name: &str) {
         s.call_on_name("select", |view: &mut SelectView<String>| {
             view.add_item_str(name);
@@ -55,7 +56,7 @@ fn add_name(s: &mut Cursive) {
                 let name = s
                     .call_on_name("name", |view: &mut EditView| view.get_content())
                     .unwrap();
-                    ok(s, &name);
+                ok(s, &name);
             })
             .button("Cancel", |s| {
                 s.pop_layer();
