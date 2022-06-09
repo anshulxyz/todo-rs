@@ -11,10 +11,41 @@ impl MigrationName for Migration {
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        todo!()
+        manager.create_table(
+            Table::create()
+                .table(Task::Table)
+                .if_not_exists()
+                .col(
+                    ColumnDef::new(Task::Id)
+                        .uuid()
+                        .not_null()
+                        .primary_key(),
+                )
+                .col(ColumnDef::new(Task::Title).string().not_null())
+                .col(ColumnDef::new(Task::Text).string())
+                .col(ColumnDef::new(Task::IsDone).boolean().not_null())
+                .col(ColumnDef::new(Task::CreatedAt).date_time().not_null())
+                .col(ColumnDef::new(Task::FinishedAt).date_time())
+                .col(ColumnDef::new(Task::DueAt).date_time())
+                .to_owned(),
+        ).await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        todo!()
+        manager.drop_table(
+            sea_query::Table::drop().table(Task::Table).to_owned()
+        ).await
     }
+}
+
+#[derive(Iden)]
+pub enum Task {
+    Table,
+    Id,
+    Title,
+    Text,
+    IsDone,
+    CreatedAt,
+    FinishedAt,
+    DueAt,
 }
