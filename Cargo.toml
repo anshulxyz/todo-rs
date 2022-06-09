@@ -3,10 +3,13 @@ name = "todo-rs"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = [".", "entity", "migration"]
 
 [dependencies]
-cursive = "0.18"
-crossterm = "0.23"
+entity = { path = "entity" }
+migration = { path = "migration" }
 tokio = { version = "1.19", features = ["macros", "rt-multi-thread"] }
 sea-orm = { version = "0.8", features = [ "sqlx-sqlite", "runtime-tokio-rustls", "macros" ], default-features = false }
+cursive = "0.18"
+crossterm = "0.23"
