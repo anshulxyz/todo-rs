@@ -10,7 +10,11 @@ path = "src/lib.rs"
 
 [dependencies]
 entity = { path = "../entity" }
-async-std = "1.11.0"
+tokio = { version = "1.19", features = ["macros", "rt-multi-thread"] }
 
 [dependencies.sea-orm-migration]
 version = "^0.8.0"
+features = [
+    "runtime-tokio-rustls",
+    "sqlx-sqlite"
+]
