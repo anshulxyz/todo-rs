@@ -4,7 +4,7 @@ use migration::{Migrator, MigratorTrait};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let connection = sea_orm::Database::connect("sqlite://tasks.db").await?;
+    let connection = sea_orm::Database::connect("sqlite://tasks.db?mode=rwc").await?;
     Migrator::up(&connection, None).await?;
     Ok(())
 }
