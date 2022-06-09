@@ -5,7 +5,7 @@ use uuid::Uuid;
 use chrono::Utc;
 
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, EntityTrait, InsertResult, Set};
+use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, EntityTrait, Set};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -24,15 +24,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
 
     let todo = todo.insert(&db).await?;
-    println!("1. {:?}", todo);
+    println!("INSERT {:?}", todo);
 
     // fetch an item from database
-    let todo: task::Model = task::Entity::find()
-        .one(&db)
+    let todos = task::Entity::find()
+        .all(&db)
         .await
-        .expect("Error fetching verse")
-        .unwrap();
-    println!("2. {:?}", todo);
+        .expect("Error fetching verse");
+    println!("FETCH {:?}", todos);
 
     Ok(())
 }
