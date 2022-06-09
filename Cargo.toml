@@ -11,5 +11,7 @@ entity = { path = "entity" }
 migration = { path = "migration" }
 tokio = { version = "1.19", features = ["macros", "rt-multi-thread"] }
 sea-orm = { version = "0.8", features = [ "sqlx-sqlite", "runtime-tokio-rustls", "macros" ], default-features = false }
+uuid = { version = "1.1.1", features = [ "v4", "fast-rng", "macro-diagnostics"] }
+chrono = "0.4.19"
 cursive = "0.18"
 crossterm = "0.23"
