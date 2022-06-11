@@ -1,8 +1,8 @@
 use cursive::views::{Checkbox, LinearLayout, ListView, TextView};
 use entity::task;
-use std::error::Error;
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ ColumnTrait, EntityTrait, QueryFilter, Set};
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter, Set};
+use std::error::Error;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -18,12 +18,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut list = ListView::new();
 
-    for (index, todo) in all_undone_tasks.iter().enumerate() {
+    for todo in all_undone_tasks {
+        let task_id = todo.id.to_owned();
         let child_view = LinearLayout::horizontal()
-            .child(Checkbox::new().on_change(|s, checked| {
+            .child(Checkbox::new().on_change(move |s, checked| {
+                println!("{:?}", task_id)
             }))
             .child(TextView::new(&todo.title));
-        list.add_child(&index.to_string(), child_view);
+        list.add_child("1", child_view);
     }
 
     let mut siv = cursive::default();
