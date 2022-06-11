@@ -1,12 +1,8 @@
-use cursive::views::{ListView, TextView};
+use cursive::views::{Checkbox, LinearLayout, ListView, TextView};
 use entity::task;
 use std::error::Error;
-use uuid::Uuid;
-
-use chrono::Utc;
-
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, EntityTrait, QueryFilter, Set};
+use sea_orm::{ ColumnTrait, EntityTrait, QueryFilter, Set};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -23,7 +19,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut list = ListView::new();
 
     for (index, todo) in all_undone_tasks.iter().enumerate() {
-        let child_view = TextView::new(&todo.title);
+        let child_view = LinearLayout::horizontal()
+            .child(Checkbox::new().on_change(|s, checked| {
+            }))
+            .child(TextView::new(&todo.title));
         list.add_child(&index.to_string(), child_view);
     }
 
