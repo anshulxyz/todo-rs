@@ -1,7 +1,9 @@
-use cursive::views::{Checkbox, Dialog, LinearLayout, ListView, TextView};
+use cursive::{
+    views::{Checkbox, Dialog, LinearLayout, ListView, TextView},
+};
 use entity::task;
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ColumnTrait, EntityTrait, QueryFilter, Set};
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter, Set, DatabaseConnection, ActiveModelTrait};
 use std::{error::Error, fmt::format};
 
 #[tokio::main]
@@ -24,11 +26,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             Checkbox::new()
                 .with_checked(is_checked)
                 .on_change(move |s, checked| {
-                    let is_marked_done = if checked { "Done" } else { "Undone" };
-                    s.add_layer(Dialog::info(format!(
-                        "The task {} is marked: {:?}",
-                        task_id, is_marked_done
-                    )));
+                    update_is_done_status(&task_id, checked);
                 });
 
         let child_view = LinearLayout::horizontal()
@@ -44,5 +42,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     siv.run();
 
+    Ok(())
+}
+
+async fn update_is_done_status(task_id: &String, is_done: bool) -> Result<(), Box<dyn Error>> {
+    let task_id = task_id.to_owned();
+    let db = sea_orm::Database::connect("sqlite://tasks.db?mode=rwc").await?;
+    let task_item = task::Entity::find_by_id(task_id).one(&db).await?;
+    let mut task_item: task::ActiveModel = task_item.unwrap().into();
+    task_item.is_done = Set(if is_done {1} else {0});
+    task_item.update(&db).await?;
     Ok(())
 }
