@@ -11,6 +11,9 @@ path = "src/lib.rs"
 [dependencies]
 entity = { path = "../entity" }
 tokio = { version = "1.19", features = ["macros", "rt-multi-thread"] }
+uuid = { version = "1.1.1", features = [ "v4", "fast-rng", "macro-diagnostics"] }
+chrono = "0.4.19"
+
 
 [dependencies.sea-orm-migration]
 version = "^0.8.0"
