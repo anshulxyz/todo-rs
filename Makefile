@@ -1,11 +1,15 @@
 .PHONY: all
-all: lintformat build test
+all: format build test
 
 
-.PHONY: lintformat
-lintformat:
-	cargo clippy
+.PHONY: format
+format:
 	cargo fmt
+
+
+.PHONY: lint
+lint:
+	cargo clippy --all --all-targets --all-features
 
 
 .PHONY: build
