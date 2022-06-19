@@ -27,15 +27,21 @@ async fn crud_test() -> Result<(), DbErr> {
         ..Default::default()
     };
 
+    // CREATE
     let todo: task::Model = todo.insert(&db).await?;
 
     assert_eq!(task_id, todo.id);
     assert_eq!(1, task::Entity::find().count(&db).await?);
+    
+    // READ
+    assert_eq!(task_title, todo.title);
 
+    // DELETE
     let result = todo.delete(&db).await?;
     println!("Deleted: {:?}", result);
     let todo = task::Entity::find_by_id(task_id.to_owned()).one(&db).await?;
     assert_eq!(None, todo);
+    assert_eq!(0, task::Entity::find().count(&db).await?);
     
     Ok(())
 }
