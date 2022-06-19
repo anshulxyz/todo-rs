@@ -31,3 +31,9 @@ run:
 .PHONY: clean
 clean:
 	cargo clean
+
+.PHONY: install
+install:
+	cargo install cargo-nextest --version 0.9.20
+	cargo install cargo-tarpaulin --version 0.20.1
+	cargo build

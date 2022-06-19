@@ -14,7 +14,14 @@
 
 ## Development
 
-- [ ] How to run tests and get code coverage
+Install dependencies for running tests and fetching code coverage.
+
+```sh
+cargo install cargo-nextest
+cargo install cargo-tarpaulin
+```
+
+
 
 ## TODO
 
