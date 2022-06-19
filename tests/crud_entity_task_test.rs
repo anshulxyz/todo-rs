@@ -1,38 +1,29 @@
 use entity::task;
+use entity::prelude::*;
 use migration::{DbErr, Migrator, MigratorTrait};
 use sea_orm::{ActiveModelTrait, Database, DbConn, EntityTrait, ModelTrait, PaginatorTrait, Set};
 use uuid::Uuid;
 
-async fn setup() -> DbConn {
-    let database_url =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_owned());
-    let db = Database::connect(&database_url)
-        .await
-        .expect("Failed to setup the database");
-    Migrator::up(&db, None)
-        .await
-        .expect("Failed to run migrations for tests");
-
-    db
-}
+mod common;
+use common::get_db_conn;
 
 #[tokio::test]
 async fn crud_test() -> Result<(), DbErr> {
-    let db = setup().await;
+    let db = get_db_conn().await;
 
     let task_id = Uuid::new_v4().to_string();
     let task_title = "Task Title 001".to_string();
-    let todo: task::ActiveModel = task::ActiveModel {
+    let todo: TaskActiveModel = TaskActiveModel {
         id: Set(task_id.to_owned()),
         title: Set(task_title.to_owned()),
         ..Default::default()
     };
 
     // CREATE
-    let todo: task::Model = todo.insert(&db).await?;
+    let todo: TaskModel = todo.insert(&db).await?;
 
     assert_eq!(task_id, todo.id);
-    assert_eq!(1, task::Entity::find().count(&db).await?);
+    assert_eq!(1, Task::find().count(&db).await?);
 
     // READ
     assert_eq!(task_title, todo.title);
@@ -40,11 +31,11 @@ async fn crud_test() -> Result<(), DbErr> {
     // DELETE
     let result = todo.delete(&db).await?;
     println!("Deleted: {:?}", result);
-    let todo = task::Entity::find_by_id(task_id.to_owned())
+    let todo = Task::find_by_id(task_id.to_owned())
         .one(&db)
         .await?;
     assert_eq!(None, todo);
-    assert_eq!(0, task::Entity::find().count(&db).await?);
+    assert_eq!(0, Task::find().count(&db).await?);
 
     Ok(())
 }

@@ -2,3 +2,5 @@
 
 pub use super::seaql_migrations::Entity as SeaqlMigrations;
 pub use super::task::Entity as Task;
+pub use super::task::Model as TaskModel;
+pub use super::task::ActiveModel as TaskActiveModel;
