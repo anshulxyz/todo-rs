@@ -20,7 +20,8 @@ test:
 
 .PHONY: cov
 cov:
-	cargo tarpaulin --color always --ignore-tests
+	cargo tarpaulin --color always --exclude-files 'entity/*' \
+		--exclude-files 'migration/*' --ignore-tests --skip-clean --locked
 
 
 .PHONY: run
