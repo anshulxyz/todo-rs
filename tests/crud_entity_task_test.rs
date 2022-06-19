@@ -1,7 +1,6 @@
-use entity::task;
 use entity::prelude::*;
-use migration::{DbErr, Migrator, MigratorTrait};
-use sea_orm::{ActiveModelTrait, Database, DbConn, EntityTrait, ModelTrait, PaginatorTrait, Set};
+use migration::DbErr;
+use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set};
 use uuid::Uuid;
 
 mod common;
@@ -31,9 +30,7 @@ async fn crud_test() -> Result<(), DbErr> {
     // DELETE
     let result = todo.delete(&db).await?;
     println!("Deleted: {:?}", result);
-    let todo = Task::find_by_id(task_id.to_owned())
-        .one(&db)
-        .await?;
+    let todo = Task::find_by_id(task_id.to_owned()).one(&db).await?;
     assert_eq!(None, todo);
     assert_eq!(0, Task::find().count(&db).await?);
 

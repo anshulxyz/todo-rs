@@ -1,9 +1,10 @@
+#![allow(dead_code)]
+
 use entity::prelude::*;
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ActiveModelTrait, Database, DatabaseConnection, DbConn, Set};
+use sea_orm::{ActiveModelTrait, Database, DbConn, Set};
 use uuid::Uuid;
 
-#[allow(dead_code)]
 pub async fn get_db_conn() -> DbConn {
     let database_url =
         std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_owned());
@@ -17,7 +18,7 @@ pub async fn get_db_conn() -> DbConn {
     db
 }
 
-pub async fn create_three_test_tasks(db: &DbConn) -> Vec<String>{
+pub async fn create_three_test_tasks(db: &DbConn) -> Vec<String> {
     let mut tasks_ids: Vec<String> = Vec::with_capacity(3);
     for n in 1..=3 {
         let task_id = Uuid::new_v4().to_string();
