@@ -17,5 +17,5 @@ cursive = "0.18"
 crossterm = "0.23"
 
 [dev-dependencies]
-cargo-llvm-cov = "0.4.8"
 cargo-nextest = "0.9.20"
+cargo-tarpaulin = "0.20.1"

@@ -15,12 +15,12 @@ build:
 
 .PHONY: test
 test:
-	DATABASE_URL='sqlite::memory:' cargo nextest run --no-capture
+	DATABASE_URL='sqlite::memory:' cargo nextest run
 
 
 .PHONY: cov
 cov:
-	cargo llvm-cov nextest
+	cargo tarpaulin --color always --ignore-tests
 
 
 .PHONY: run
@@ -31,4 +31,3 @@ run:
 .PHONY: clean
 clean:
 	cargo clean
-	cargo llvm-cov clean --workspace

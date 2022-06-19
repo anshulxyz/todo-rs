@@ -11,3 +11,11 @@
 ## Usage
 
 ## Gallery
+
+## Development
+
+- [ ] How to run tests and get code coverage
+
+## TODO
+
+- [ ] Add a Dockerfile for testing and dev
