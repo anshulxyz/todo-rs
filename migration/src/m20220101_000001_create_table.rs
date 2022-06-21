@@ -1,6 +1,4 @@
-use chrono::Utc;
 use sea_orm_migration::prelude::*;
-use uuid::Uuid;
 
 pub struct Migration;
 
@@ -18,24 +16,13 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Task::Table)
                     .if_not_exists()
-                    .col(
-                        ColumnDef::new(Task::Id)
-                            .uuid()
-                            .not_null()
-                            .primary_key()
-                            .default(Uuid::new_v4().to_string()),
-                    )
+                    .col(ColumnDef::new(Task::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(Task::Title).string().not_null())
                     .col(ColumnDef::new(Task::Text).string())
                     .col(ColumnDef::new(Task::IsDone).boolean().not_null().default(0))
-                    .col(
-                        ColumnDef::new(Task::CreatedAt)
-                            .date_time()
-                            .not_null()
-                            .default(Utc::now().naive_utc().to_string()),
-                    )
-                    .col(ColumnDef::new(Task::FinishedAt).date_time())
-                    .col(ColumnDef::new(Task::DueAt).date_time())
+                    .col(ColumnDef::new(Task::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Task::FinishedAt).timestamp())
+                    .col(ColumnDef::new(Task::DueAt).timestamp())
                     .to_owned(),
             )
             .await
