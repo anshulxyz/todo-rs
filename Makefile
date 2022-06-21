@@ -14,7 +14,7 @@ lint:
 
 .PHONY: build
 build:
-	cargo build
+	DATABASE_URL='sqlite://tasks.sqlite?mode=rwc' cargo build
 
 
 .PHONY: test
@@ -30,7 +30,7 @@ cov:
 
 .PHONY: run
 run:
-	DATABASE_URL='sqlite://tasks.sqlite3?mode=rwc' cargo run
+	DATABASE_URL='sqlite://tasks.sqlite?mode=rwc' cargo run
 
 
 .PHONY: clean
