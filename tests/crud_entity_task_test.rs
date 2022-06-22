@@ -1,3 +1,4 @@
+use chrono::Utc;
 use entity::prelude::*;
 use migration::DbErr;
 use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set};
@@ -6,6 +7,7 @@ use uuid::Uuid;
 mod common;
 use common::get_db_conn;
 
+/// Testing the SeaORM Entities
 #[tokio::test]
 async fn crud_test() -> Result<(), DbErr> {
     let db = get_db_conn().await;
@@ -15,6 +17,7 @@ async fn crud_test() -> Result<(), DbErr> {
     let todo: TaskActiveModel = TaskActiveModel {
         id: Set(task_id.to_owned()),
         title: Set(task_title.to_owned()),
+        created_at: Set(Utc::now().to_string()),
         ..Default::default()
     };
 

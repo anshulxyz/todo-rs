@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use chrono::Utc;
 use entity::prelude::*;
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{ActiveModelTrait, Database, DbConn, Set};
@@ -26,6 +27,7 @@ pub async fn create_three_test_tasks(db: &DbConn) -> Vec<String> {
         let todo: TaskActiveModel = TaskActiveModel {
             id: Set(task_id.to_owned()),
             title: Set(task_title.to_owned()),
+            created_at: Set(Utc::now().to_string()),
             ..Default::default()
         };
         todo.insert(db)
