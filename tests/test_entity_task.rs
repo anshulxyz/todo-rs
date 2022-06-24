@@ -9,7 +9,7 @@ use common::get_db_conn;
 
 /// Testing the SeaORM Entities
 #[tokio::test]
-async fn crud_test() -> Result<(), DbErr> {
+async fn test_crud_entity() -> Result<(), DbErr> {
     let db = get_db_conn().await;
 
     let task_id = Uuid::new_v4().to_string();
@@ -31,18 +31,21 @@ async fn crud_test() -> Result<(), DbErr> {
     assert_eq!(task_title, todo.title);
 
     //UPDATE
-    let todo = task::Entity::find_by_id(task_id.to_owned()).one(&db).await?;
+    let todo = task::Entity::find_by_id(task_id.to_owned())
+        .one(&db)
+        .await?;
     let mut todo: task::ActiveModel = todo.unwrap().into();
     assert_eq!(todo.is_done, Unchanged(0));
     todo.is_done = Set(1);
     let todo: task::Model = todo.update(&db).await?;
     assert_eq!(todo.is_done, 1);
 
-
     // DELETE
     let result = todo.delete(&db).await?;
     println!("Deleted: {:?}", result);
-    let todo = task::Entity::find_by_id(task_id.to_owned()).one(&db).await?;
+    let todo = task::Entity::find_by_id(task_id.to_owned())
+        .one(&db)
+        .await?;
     assert_eq!(None, todo);
     assert_eq!(0, task::Entity::find().count(&db).await?);
 
