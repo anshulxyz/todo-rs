@@ -1,5 +1,5 @@
 use chrono::Utc;
-use entity::prelude::*;
+use entity::task;
 use migration::DbErr;
 use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set};
 use uuid::Uuid;
@@ -14,7 +14,7 @@ async fn crud_test() -> Result<(), DbErr> {
 
     let task_id = Uuid::new_v4().to_string();
     let task_title = "Task Title 001".to_string();
-    let todo: TaskActiveModel = TaskActiveModel {
+    let todo = task::ActiveModel {
         id: Set(task_id.to_owned()),
         title: Set(task_title.to_owned()),
         created_at: Set(Utc::now().to_string()),
@@ -22,10 +22,10 @@ async fn crud_test() -> Result<(), DbErr> {
     };
 
     // CREATE
-    let todo: TaskModel = todo.insert(&db).await?;
+    let todo: task::Model = todo.insert(&db).await?;
 
     assert_eq!(task_id, todo.id);
-    assert_eq!(1, Task::find().count(&db).await?);
+    assert_eq!(1, task::Entity::find().count(&db).await?);
 
     // READ
     assert_eq!(task_title, todo.title);
@@ -33,9 +33,9 @@ async fn crud_test() -> Result<(), DbErr> {
     // DELETE
     let result = todo.delete(&db).await?;
     println!("Deleted: {:?}", result);
-    let todo = Task::find_by_id(task_id.to_owned()).one(&db).await?;
+    let todo = task::Entity::find_by_id(task_id.to_owned()).one(&db).await?;
     assert_eq!(None, todo);
-    assert_eq!(0, Task::find().count(&db).await?);
+    assert_eq!(0, task::Entity::find().count(&db).await?);
 
     Ok(())
 }

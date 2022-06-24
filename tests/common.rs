@@ -1,10 +1,7 @@
 #![allow(dead_code)]
 
-use chrono::Utc;
-use entity::prelude::*;
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ActiveModelTrait, Database, DbConn, Set};
-use uuid::Uuid;
+use sea_orm::{Database, DbConn};
 
 pub async fn get_db_conn() -> DbConn {
     let database_url =
@@ -17,26 +14,4 @@ pub async fn get_db_conn() -> DbConn {
         .expect("Failed to run migrations for tests");
 
     db
-}
-
-pub async fn create_three_test_tasks(db: &DbConn) -> Vec<String> {
-    let mut tasks_ids: Vec<String> = Vec::with_capacity(3);
-    for n in 1..=3 {
-        let task_id = Uuid::new_v4().to_string();
-        let task_title = format!("Task title 00{}", n);
-        let todo: TaskActiveModel = TaskActiveModel {
-            id: Set(task_id.to_owned()),
-            title: Set(task_title.to_owned()),
-            created_at: Set(Utc::now().to_string()),
-            ..Default::default()
-        };
-        todo.insert(db)
-            .await
-            .expect("Failed to insert task in database");
-        tasks_ids.push(task_id);
-    }
-
-    tasks_ids.sort();
-
-    tasks_ids
 }

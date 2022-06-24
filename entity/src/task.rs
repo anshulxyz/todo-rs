@@ -12,7 +12,6 @@ pub struct Model {
     pub is_done: i32,
     pub created_at: String,
     pub finished_at: Option<String>,
-    pub due_at: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]

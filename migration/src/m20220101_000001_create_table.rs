@@ -22,7 +22,6 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Task::IsDone).boolean().not_null().default(0))
                     .col(ColumnDef::new(Task::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Task::FinishedAt).timestamp())
-                    .col(ColumnDef::new(Task::DueAt).timestamp())
                     .to_owned(),
             )
             .await
@@ -44,5 +43,4 @@ pub enum Task {
     IsDone,
     CreatedAt,
     FinishedAt,
-    DueAt,
 }
