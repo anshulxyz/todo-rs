@@ -1,3 +1,5 @@
+DATABASE_URL = DATABASE_URL='sqlite://tasks.sqlite?mode=rwc'
+
 .PHONY: all
 all: format build test
 
@@ -14,7 +16,7 @@ lint:
 
 .PHONY: build
 build:
-	DATABASE_URL='sqlite://tasks.sqlite?mode=rwc' cargo build
+	$(DATABASE_URL) cargo build
 
 
 .PHONY: test
@@ -30,7 +32,7 @@ cov:
 
 .PHONY: run
 run:
-	DATABASE_URL='sqlite://tasks.sqlite?mode=rwc' cargo run
+	$(DATABASE_URL) cargo run
 
 
 .PHONY: clean
@@ -42,3 +44,7 @@ install:
 	cargo install cargo-nextest --version 0.9.20
 	cargo install cargo-tarpaulin --version 0.20.1
 	cargo build
+
+.PHONY: migrate
+.migrate:
+	$(DATABASE_URL) sea-orm-cli migrate up
