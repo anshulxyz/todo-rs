@@ -1,7 +1,7 @@
 use chrono::Utc;
 use entity::task;
 use migration::DbErr;
-use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set};
+use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set, Unchanged};
 use uuid::Uuid;
 
 mod common;
@@ -29,6 +29,15 @@ async fn crud_test() -> Result<(), DbErr> {
 
     // READ
     assert_eq!(task_title, todo.title);
+
+    //UPDATE
+    let todo = task::Entity::find_by_id(task_id.to_owned()).one(&db).await?;
+    let mut todo: task::ActiveModel = todo.unwrap().into();
+    assert_eq!(todo.is_done, Unchanged(0));
+    todo.is_done = Set(1);
+    let todo: task::Model = todo.update(&db).await?;
+    assert_eq!(todo.is_done, 1);
+
 
     // DELETE
     let result = todo.delete(&db).await?;
