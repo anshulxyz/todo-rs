@@ -8,7 +8,6 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
     pub title: String,
-    pub text: Option<String>,
     pub is_done: i32,
     pub created_at: String,
     pub finished_at: Option<String>,

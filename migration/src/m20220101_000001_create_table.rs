@@ -18,7 +18,6 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(ColumnDef::new(Task::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(Task::Title).string().not_null())
-                    .col(ColumnDef::new(Task::Text).string())
                     .col(ColumnDef::new(Task::IsDone).boolean().not_null().default(0))
                     .col(ColumnDef::new(Task::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Task::FinishedAt).timestamp())
@@ -39,7 +38,6 @@ pub enum Task {
     Table,
     Id,
     Title,
-    Text,
     IsDone,
     CreatedAt,
     FinishedAt,
