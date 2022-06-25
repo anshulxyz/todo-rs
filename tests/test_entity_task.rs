@@ -1,4 +1,5 @@
-use chrono::Utc;
+use chrono::{Local, SubsecRound};
+
 use entity::task;
 use migration::DbErr;
 use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set, Unchanged};
@@ -17,7 +18,7 @@ async fn test_crud_entity() -> Result<(), DbErr> {
     let todo = task::ActiveModel {
         id: Set(task_id.to_owned()),
         title: Set(task_title.to_owned()),
-        created_at: Set(Utc::now().to_string()),
+        created_at: Set(Local::now().round_subsecs(0).format("%F %H:%M:%S").to_string()),
         ..Default::default()
     };
 
