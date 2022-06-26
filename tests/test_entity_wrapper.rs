@@ -1,12 +1,16 @@
+use std::ops::Sub;
+
 mod common;
 use common::get_db_conn;
 
 use entity::task;
 use migration::DbErr;
-use todo_rs::{create_task, get_all_undone_tasks, update_task_is_done};
+use todo_rs::{
+    create_task, get_all_done_tasks_for_today, get_all_undone_tasks, update_task_is_done,
+};
 
-use chrono::{Local, SubsecRound};
-use sea_orm::{ActiveModelTrait, EntityTrait, PaginatorTrait, Set};
+use chrono::{Duration, Local, SubsecRound};
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter, Set};
 use uuid::Uuid;
 
 #[tokio::test]
@@ -35,10 +39,7 @@ async fn test_update_task_is_done() -> Result<(), DbErr> {
     let todo = task::ActiveModel {
         id: Set(Uuid::new_v4().to_owned().to_string()),
         title: Set(task_title.to_owned()),
-        created_at: Set(Local::now()
-            .round_subsecs(0)
-            .format("%F %H:%M:%S")
-            .to_string()),
+        created_at: Set(Local::now().round_subsecs(0).format("%F").to_string()),
         ..Default::default()
     };
     let todo: task::Model = todo.insert(&db).await.unwrap();
@@ -55,6 +56,20 @@ async fn test_update_task_is_done() -> Result<(), DbErr> {
 }
 
 #[tokio::test]
+async fn test_get_all_undone_tasks_when_none_exist() -> Result<(), DbErr> {
+    // given we there are no tasks in database
+    let db = get_db_conn().await;
+
+    // when I fetch all the undone takss
+    let all_undone_tasks: Vec<task::Model> = get_all_undone_tasks(&db).await?;
+
+    // then we should get an empty vec
+    assert_eq!(all_undone_tasks.len(), 0);
+
+    Ok(())
+}
+
+#[tokio::test]
 async fn test_get_all_undone_tasks() -> Result<(), DbErr> {
     // given we have created three tasks, of which one is marked done
     let db = get_db_conn().await;
@@ -62,10 +77,7 @@ async fn test_get_all_undone_tasks() -> Result<(), DbErr> {
         let todo = task::ActiveModel {
             id: Set(Uuid::new_v4().to_owned().to_string()),
             title: Set(format!("Task title 00{}", i)),
-            created_at: Set(Local::now()
-                .round_subsecs(0)
-                .format("%F %H:%M:%S")
-                .to_string()),
+            created_at: Set(Local::now().round_subsecs(0).format("%F").to_string()),
             is_done: Set(if i == 0 { 1 } else { 0 }),
             ..Default::default()
         };
@@ -76,5 +88,46 @@ async fn test_get_all_undone_tasks() -> Result<(), DbErr> {
 
     // then I should only get two tasks whose status is undone
     assert_eq!(all_undone_tasks.len(), 2);
+    for todo in all_undone_tasks {
+        assert_eq!(todo.is_done, 0);
+    }
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
+    // given there are four tasks, in database,one was created today, and three were created yesterday
+    let db = get_db_conn().await;
+    for i in 0..=3 {
+        let todo = task::ActiveModel {
+            id: Set(Uuid::new_v4().to_owned().to_string()),
+            title: Set(format!("Task title 00{}", i)),
+            created_at: Set(Local::today()
+                .sub(Duration::days(if i == 0 { 0 } else { 1 }))
+                .format("%F")
+                .to_string()),
+            is_done: Set(1),
+            ..Default::default()
+        };
+        let _todo = todo.insert(&db).await;
+    }
+
+    // when we fetch all the done tasks for "today"
+    let todos: Vec<task::Model> = get_all_done_tasks_for_today(&db).await?;
+
+    // then we should get an empty vec
+    assert_eq!(todos.len(), 1);
+
+    // etc, check there are three tasks created yesterday
+    let yesterday = Local::today()
+        .sub(Duration::days(1))
+        .format("%F")
+        .to_string();
+    let count = task::Entity::find()
+        .filter(task::Column::CreatedAt.eq(yesterday))
+        .all(&db)
+        .await?;
+    assert_eq!(3, count.len());
+
     Ok(())
 }
