@@ -18,7 +18,10 @@ async fn test_crud_entity() -> Result<(), DbErr> {
     let todo = task::ActiveModel {
         id: Set(task_id.to_owned()),
         title: Set(task_title.to_owned()),
-        created_at: Set(Local::now().round_subsecs(0).format("%F %H:%M:%S").to_string()),
+        created_at: Set(Local::now()
+            .round_subsecs(0)
+            .format("%F %H:%M:%S")
+            .to_string()),
         ..Default::default()
     };
 
