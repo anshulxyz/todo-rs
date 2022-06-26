@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Task::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(Task::Title).string().not_null())
                     .col(ColumnDef::new(Task::IsDone).boolean().not_null().default(0))
-                    .col(ColumnDef::new(Task::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Task::CreatedAt).date().not_null())
                     .col(ColumnDef::new(Task::FinishedAt).timestamp())
                     .to_owned(),
             )
