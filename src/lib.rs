@@ -1,8 +1,21 @@
 use chrono::{Local, SubsecRound};
 use entity::task;
-use migration::DbErr;
-use sea_orm::{ActiveModelTrait, ColumnTrait, DbConn, EntityTrait, QueryFilter, Set};
+use migration::{DbErr, Migrator, MigratorTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Database, DbConn, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
+
+pub async fn get_db_conn() -> DbConn {
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_owned());
+    let db = Database::connect(&database_url)
+        .await
+        .expect("Failed to setup the database");
+    Migrator::up(&db, None)
+        .await
+        .expect("Failed to run migrations for tests");
+
+    db
+}
 
 pub async fn create_task(db: &DbConn, title: &str) -> Result<task::Model, DbErr> {
     let todo = task::ActiveModel {

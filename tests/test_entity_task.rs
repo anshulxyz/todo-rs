@@ -1,12 +1,10 @@
 use chrono::{Local, SubsecRound};
+use todo_rs::get_db_conn;
 
 use entity::task;
 use migration::DbErr;
 use sea_orm::{ActiveModelTrait, EntityTrait, ModelTrait, PaginatorTrait, Set, Unchanged};
 use uuid::Uuid;
-
-mod common;
-use common::get_db_conn;
 
 /// Testing the SeaORM Entities
 #[tokio::test]

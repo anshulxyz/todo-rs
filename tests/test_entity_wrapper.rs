@@ -1,12 +1,10 @@
 use std::ops::Sub;
 
-mod common;
-use common::get_db_conn;
-
 use entity::task;
 use migration::DbErr;
 use todo_rs::{
-    create_task, get_all_done_tasks_for_today, get_all_undone_tasks, update_task_is_done,
+    create_task, get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn,
+    update_task_is_done,
 };
 
 use chrono::{Duration, Local, SubsecRound};
