@@ -4,7 +4,7 @@ use migration::{DbErr, Migrator, MigratorTrait};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Database, DbConn, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
 
-pub async fn get_db_conn() -> DbConn {
+pub async fn get_db_conn() -> Result<DbConn, DbErr> {
     let database_url =
         std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_owned());
     let db = Database::connect(&database_url)
@@ -14,7 +14,7 @@ pub async fn get_db_conn() -> DbConn {
         .await
         .expect("Failed to run migrations for tests");
 
-    db
+    Ok(db)
 }
 
 pub async fn create_task(db: &DbConn, title: &str) -> Result<task::Model, DbErr> {

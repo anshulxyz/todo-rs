@@ -9,7 +9,7 @@ use uuid::Uuid;
 /// Testing the SeaORM Entities
 #[tokio::test]
 async fn test_crud_entity() -> Result<(), DbErr> {
-    let db = get_db_conn().await;
+    let db = get_db_conn().await?;
 
     let task_id = Uuid::new_v4().to_string();
     let task_title = "Task Title 001".to_string();

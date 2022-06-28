@@ -15,7 +15,7 @@ use uuid::Uuid;
 async fn test_create_task() -> Result<(), DbErr> {
     // given
     let task_title = "Task Title";
-    let db = get_db_conn().await;
+    let db = get_db_conn().await?;
     let count = task::Entity::find().count(&db).await.unwrap_or(0);
     assert_eq!(0, count);
 
@@ -32,7 +32,7 @@ async fn test_create_task() -> Result<(), DbErr> {
 #[tokio::test]
 async fn test_update_task_is_done() -> Result<(), DbErr> {
     // given we have created a task
-    let db = get_db_conn().await;
+    let db = get_db_conn().await?;
     let task_title = "Task title".to_string();
     let todo = task::ActiveModel {
         id: Set(Uuid::new_v4().to_owned().to_string()),
@@ -56,7 +56,7 @@ async fn test_update_task_is_done() -> Result<(), DbErr> {
 #[tokio::test]
 async fn test_get_all_undone_tasks_when_none_exist() -> Result<(), DbErr> {
     // given we there are no tasks in database
-    let db = get_db_conn().await;
+    let db = get_db_conn().await?;
 
     // when I fetch all the undone takss
     let all_undone_tasks: Vec<task::Model> = get_all_undone_tasks(&db).await?;
@@ -70,7 +70,7 @@ async fn test_get_all_undone_tasks_when_none_exist() -> Result<(), DbErr> {
 #[tokio::test]
 async fn test_get_all_undone_tasks() -> Result<(), DbErr> {
     // given we have created three tasks, of which one is marked done
-    let db = get_db_conn().await;
+    let db = get_db_conn().await?;
     for i in 0..=2 {
         let todo = task::ActiveModel {
             id: Set(Uuid::new_v4().to_owned().to_string()),
@@ -95,7 +95,7 @@ async fn test_get_all_undone_tasks() -> Result<(), DbErr> {
 #[tokio::test]
 async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
     // given there are four tasks, in database,one was created today, and three were created yesterday
-    let db = get_db_conn().await;
+    let db = get_db_conn().await?;
     for i in 0..=3 {
         let todo = task::ActiveModel {
             id: Set(Uuid::new_v4().to_owned().to_string()),
