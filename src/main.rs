@@ -1,9 +1,8 @@
-use cursive::{
-    traits::Nameable,
-    views::{Checkbox, Dialog, LinearLayout, ListView, TextView},
-};
+use cursive::views::{Checkbox, Dialog, LinearLayout, ListView, TextView};
 use migration::DbErr;
-use todo_rs::{create_task, get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn};
+use todo_rs::{
+    get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn, update_task_is_done,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), DbErr> {
@@ -24,20 +23,27 @@ async fn main() -> Result<(), DbErr> {
     // create a list of checkbox-views, populate them with todos
     let mut undone_list_view = ListView::new();
 
-    for (index, todo) in todos.iter().enumerate() {
-        let task_id = todo.id.to_owned();
-        let mut checkbox = Checkbox::new().on_change(move |s, checked| {
+    for todo in todos {
+        let mut checkbox = Checkbox::new();
+        checkbox.set_checked(todo.is_done != 0);
+        checkbox.set_on_change(move |s, checked| {
+            // let moved_db = db;
+            let task_id = todo.id.to_owned();
+            tokio::spawn(async move {
+                let closure_db = get_db_conn().await.expect("Test");
+                let _todo = update_task_is_done(&closure_db, task_id, checked)
+                    .await
+                    .expect("Failed to change status of the task");
+            });
             s.add_layer(Dialog::info(format!(
-                "The task '{}' was marked {}",
-                task_id,
-                if checked { "done" } else { "undone" }
+                "The task was marked: {}",
+                if checked { "DONE" } else { "UNDONE`" }
             )));
         });
-        checkbox.set_checked(todo.is_done != 0);
         let title = todo.title.to_owned();
         let title = TextView::new(title);
         let linear_layout = LinearLayout::horizontal().child(checkbox).child(title);
-        undone_list_view.add_child(format!("{:?}", index).as_str(), linear_layout);
+        undone_list_view.add_child("-", linear_layout);
     }
 
     siv.add_layer(undone_list_view);
