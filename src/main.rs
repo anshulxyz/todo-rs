@@ -21,7 +21,7 @@ async fn main() -> Result<(), DbErr> {
     todos.append(&mut done_todos_for_today);
 
     // create a list of checkbox-views, populate them with todos
-    let mut undone_list_view = ListView::new();
+    let mut list_view = ListView::new();
 
     for todo in todos {
         let mut checkbox = Checkbox::new();
@@ -43,10 +43,10 @@ async fn main() -> Result<(), DbErr> {
         let title = todo.title.to_owned();
         let title = TextView::new(title);
         let linear_layout = LinearLayout::horizontal().child(checkbox).child(title);
-        undone_list_view.add_child("-", linear_layout);
+        list_view.add_child("-", linear_layout);
     }
 
-    siv.add_layer(undone_list_view);
+    siv.add_layer(list_view);
 
     siv.run();
 
