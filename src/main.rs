@@ -1,7 +1,11 @@
-use cursive::views::{Checkbox, Dialog, LinearLayout, ListView, TextView};
+use cursive::{
+    traits::Nameable,
+    views::{Checkbox, Dialog, EditView, LinearLayout, ListView, TextView},
+    Cursive,
+};
 use migration::DbErr;
 use todo_rs::{
-    get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn, update_task_is_done,
+    get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn, update_task_is_done, create_task,
 };
 
 #[tokio::main]
@@ -30,7 +34,7 @@ async fn main() -> Result<(), DbErr> {
             // let moved_db = db;
             let task_id = todo.id.to_owned();
             tokio::spawn(async move {
-                let closure_db = get_db_conn().await.expect("Test");
+                let closure_db = get_db_conn().await.expect("Failed to created database connection for closure");
                 let _todo = update_task_is_done(&closure_db, task_id, checked)
                     .await
                     .expect("Failed to change status of the task");
@@ -48,7 +52,39 @@ async fn main() -> Result<(), DbErr> {
 
     siv.add_layer(list_view);
 
+    siv.add_global_callback('a', |s| {
+        let dialog = Dialog::new()
+            .title("Add new task!")
+            .padding_lrtb(1, 1, 1, 0)
+            .content(
+                EditView::new()
+                    .on_submit(show_popup)
+                    .with_name("add_edit_view"),
+            )
+            .button("Ok", |s| {
+                let todo = s
+                    .call_on_name("add_edit_view", |view: &mut EditView| view.get_content())
+                    .unwrap();
+                show_popup(s, &todo);
+            });
+        s.add_layer(dialog);
+    });
+
     siv.run();
 
     Ok(())
+}
+
+fn show_popup(s: &mut Cursive, todo: &str) {
+    if todo.is_empty() {
+        s.add_layer(Dialog::info("Please enter a task!"));
+    } else {
+        let todo = todo.to_owned();
+        tokio::spawn(async move {
+            let db = get_db_conn().await.expect("Failed to created database connection for closure");
+            let _todo = create_task(&db, todo.as_str()).await;
+        });
+        s.pop_layer();
+        s.add_layer(Dialog::info("Task added to the database"));
+    }
 }
