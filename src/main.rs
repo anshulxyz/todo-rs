@@ -50,7 +50,7 @@ async fn main() -> Result<(), DbErr> {
         list_view.add_child("-", linear_layout);
     }
 
-    siv.add_layer(list_view);
+    siv.add_layer(Dialog::around(list_view).title("TASKS"));
 
     siv.add_global_callback('a', |s| {
         let dialog = Dialog::new()
