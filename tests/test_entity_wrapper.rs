@@ -94,16 +94,20 @@ async fn test_get_all_undone_tasks() -> Result<(), DbErr> {
 
 #[tokio::test]
 async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
-    // given there are four tasks, in database,one was created today, and three were created yesterday
+    // given there are four tasks, in database, ONLY one was finished today, and three were finished yesterday
     let db = get_db_conn().await?;
     for i in 0..=3 {
         let todo = task::ActiveModel {
             id: Set(Uuid::new_v4().to_owned().to_string()),
             title: Set(format!("Task title 00{}", i)),
             created_at: Set(Local::today()
-                .sub(Duration::days(if i == 0 { 0 } else { 1 }))
+                .sub(Duration::days(3))
                 .format("%F")
                 .to_string()),
+            finished_at: Set(Some(Local::today()
+            .sub(Duration::days(if i == 0 { 0 } else { 1 }))
+            .format("%F")
+            .to_string())),
             is_done: Set(1),
             ..Default::default()
         };
@@ -116,13 +120,13 @@ async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
     // then we should get an empty vec
     assert_eq!(todos.len(), 1);
 
-    // etc, check there are three tasks created yesterday
+    // etc, check there are three tasks finished yesterday
     let yesterday = Local::today()
         .sub(Duration::days(1))
         .format("%F")
         .to_string();
     let count = task::Entity::find()
-        .filter(task::Column::CreatedAt.eq(yesterday))
+        .filter(task::Column::FinishedAt.eq(yesterday))
         .all(&db)
         .await?;
     assert_eq!(3, count.len());

@@ -51,7 +51,7 @@ pub async fn get_all_undone_tasks(db: &DbConn) -> Result<Vec<task::Model>, DbErr
 pub async fn get_all_done_tasks_for_today(db: &DbConn) -> Result<Vec<task::Model>, DbErr> {
     let today = Local::today().format("%F").to_string();
     let todos = task::Entity::find()
-        .filter(task::Column::CreatedAt.eq(today))
+        .filter(task::Column::FinishedAt.eq(today))
         .filter(task::Column::IsDone.eq(1))
         .all(db)
         .await;
