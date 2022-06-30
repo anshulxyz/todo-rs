@@ -61,6 +61,7 @@ async fn main() -> Result<(), DbErr> {
                     .on_submit(show_popup)
                     .with_name("add_edit_view"),
             )
+            .dismiss_button("Cancel")
             .button("Ok", |s| {
                 let todo = s
                     .call_on_name("add_edit_view", |view: &mut EditView| view.get_content())
