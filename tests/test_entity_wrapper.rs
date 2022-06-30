@@ -46,6 +46,7 @@ async fn test_update_task_is_done() -> Result<(), DbErr> {
     let todo = update_task_is_done(&db, todo.id, true).await?;
     // then
     assert_eq!(todo.title, task_title);
+    assert!(todo.finished_at.is_some());
     assert_eq!(todo.is_done, 1);
     let count = task::Entity::find().count(&db).await.unwrap_or(0);
     assert_eq!(1, count);
@@ -104,10 +105,12 @@ async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
                 .sub(Duration::days(3))
                 .format("%F")
                 .to_string()),
-            finished_at: Set(Some(Local::today()
-            .sub(Duration::days(if i == 0 { 0 } else { 1 }))
-            .format("%F")
-            .to_string())),
+            finished_at: Set(Some(
+                Local::today()
+                    .sub(Duration::days(if i == 0 { 0 } else { 1 }))
+                    .format("%F")
+                    .to_string(),
+            )),
             is_done: Set(1),
             ..Default::default()
         };
@@ -130,6 +133,31 @@ async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
         .all(&db)
         .await?;
     assert_eq!(3, count.len());
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_set_and_unset_status_of_task() -> Result<(), DbErr> {
+    // given we have a task
+    let task_title = "CHanged task";
+    let db = get_db_conn().await?;
+    let count = task::Entity::find().count(&db).await.unwrap_or(0);
+    assert_eq!(0, count);
+    let todo = create_task(&db, task_title).await.unwrap();
+    assert!(todo.finished_at.is_none());
+
+    // when we set it's status to done, and then to undone
+    let todo = update_task_is_done(&db, todo.id, true).await?;
+    assert_eq!(todo.is_done, 1);
+    assert!(todo.finished_at.is_some());
+
+    // when we change it's status again to false
+    let todo = update_task_is_done(&db, todo.id, false).await?;
+    assert_eq!(todo.is_done, 0);
+
+    // then it's `finished_at` field should be None/NULL
+    assert!(todo.finished_at.is_none());
 
     Ok(())
 }
