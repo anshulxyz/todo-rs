@@ -5,7 +5,8 @@ use cursive::{
 };
 use migration::DbErr;
 use todo_rs::{
-    get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn, update_task_is_done, create_task,
+    create_task, get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn,
+    update_task_is_done,
 };
 
 #[tokio::main]
@@ -34,7 +35,9 @@ async fn main() -> Result<(), DbErr> {
             // let moved_db = db;
             let task_id = todo.id.to_owned();
             tokio::spawn(async move {
-                let closure_db = get_db_conn().await.expect("Failed to created database connection for closure");
+                let closure_db = get_db_conn()
+                    .await
+                    .expect("Failed to created database connection for closure");
                 let _todo = update_task_is_done(&closure_db, task_id, checked)
                     .await
                     .expect("Failed to change status of the task");
@@ -82,7 +85,9 @@ fn show_popup(s: &mut Cursive, todo: &str) {
     } else {
         let todo = todo.to_owned();
         tokio::spawn(async move {
-            let db = get_db_conn().await.expect("Failed to created database connection for closure");
+            let db = get_db_conn()
+                .await
+                .expect("Failed to created database connection for closure");
             let _todo = create_task(&db, todo.as_str()).await;
         });
         s.pop_layer();
