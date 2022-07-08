@@ -92,5 +92,10 @@ fn show_popup(s: &mut Cursive, todo: &str) {
         });
         s.pop_layer();
         s.add_layer(Dialog::info("Task added to the database"));
+        s.call_on_name("LIST", |view: &mut ListView| {
+            let title = TextView::new("SAMPLE TEXT");
+            let linear_layout = LinearLayout::horizontal().child(title);
+            view.add_child("-", linear_layout);
+        });
     }
 }
