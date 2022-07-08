@@ -26,7 +26,8 @@ async fn main() -> Result<(), DbErr> {
     todos.append(&mut done_todos_for_today);
 
     // create a list of checkbox-views, populate them with todos
-    let mut list_view = ListView::new();
+    let mut list_view = ListView::new().with_name("LIST");
+    siv.add_layer(Dialog::around(list_view).title("TASKS"));
 
     for todo in todos {
         let mut checkbox = Checkbox::new();
@@ -47,13 +48,12 @@ async fn main() -> Result<(), DbErr> {
                 if checked { "DONE" } else { "UNDONE`" }
             )));
         });
-        let title = todo.title.to_owned();
-        let title = TextView::new(title);
+        let title = TextView::new(todo.title.to_owned());
         let linear_layout = LinearLayout::horizontal().child(checkbox).child(title);
-        list_view.add_child("-", linear_layout);
+        siv.call_on_name("LIST", |view: &mut ListView| {
+            view.add_child("-", linear_layout);
+        });
     }
-
-    siv.add_layer(Dialog::around(list_view).title("TASKS"));
 
     siv.add_global_callback('a', |s| {
         let dialog = Dialog::new()
