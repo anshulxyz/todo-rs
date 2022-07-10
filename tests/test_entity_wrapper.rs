@@ -113,7 +113,6 @@ async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
                     .to_string(),
             )),
             is_done: Set(1),
-            ..Default::default()
         };
         let _todo = todo.insert(&db).await;
     }

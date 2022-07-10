@@ -16,7 +16,7 @@ pub async fn get_db_conn() -> Result<DbConn, DbErr> {
     Ok(db)
 }
 
-pub async fn create_task(db: &DbConn, id:String, title: String) -> Result<task::Model, DbErr> {
+pub async fn create_task(db: &DbConn, id: String, title: String) -> Result<task::Model, DbErr> {
     let todo = task::ActiveModel {
         id: Set(id),
         title: Set(title),

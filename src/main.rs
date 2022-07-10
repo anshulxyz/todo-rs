@@ -27,6 +27,8 @@ async fn main() -> Result<(), DbErr> {
     todos.append(&mut done_todos_for_today);
 
     // create a list of checkbox-views, populate them with todos
+    // this variable `list_view` is actually mutated by calling it's name using `call_on_name` method
+    #[allow(unused_mut)]
     let mut list_view = ListView::new().with_name("LIST");
     siv.add_layer(Dialog::around(list_view).title("TASKS"));
 
