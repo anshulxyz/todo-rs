@@ -21,13 +21,7 @@ build:
 
 .PHONY: test
 test:
-	DATABASE_URL='sqlite::memory:' cargo nextest run
-
-
-.PHONY: cov
-cov:
-	cargo tarpaulin --color always --exclude-files 'entity/*' \
-		--exclude-files 'migration/*' --ignore-tests --skip-clean --locked
+	DATABASE_URL='sqlite::memory:' cargo test
 
 
 .PHONY: run
@@ -39,11 +33,6 @@ run:
 clean:
 	cargo clean
 
-.PHONY: install
-install:
-	cargo install cargo-nextest --version 0.9.20
-	cargo install cargo-tarpaulin --version 0.20.1
-	cargo build
 
 .PHONY: migrate
 migrate:
