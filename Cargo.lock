@@ -386,9 +386,9 @@ checksum = "ccaeedb56da03b09f598226e25e80088cb4cd25f316e6e4df7d695f0feeb1403"
 
 [[package]]
 name = "crossbeam-channel"
-version = "0.5.4"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5aaa7bd5fb665c6864b5f963dd9097905c54125909c7aa94c9e18507cdbe6c53"
+checksum = "4c02a4d71819009c192cf4872265391563fd6a84c81ff2c0f2a7026ca4c1d85c"
 dependencies = [
  "cfg-if",
  "crossbeam-utils",
@@ -468,23 +468,21 @@ dependencies = [
  "ahash",
  "cfg-if",
  "crossbeam-channel",
+ "crossterm",
  "cursive_core",
  "lazy_static",
  "libc",
  "log",
- "maplit",
- "ncurses",
  "signal-hook",
- "term_size",
  "unicode-segmentation",
  "unicode-width",
 ]
 
 [[package]]
 name = "cursive_core"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec401760420b5a74f0bcbbbcbd6d5e02e766d3a20ba542aaa05eae1a61212daf"
+checksum = "fd7ce05aa62900e300d0f6588bfd3cf116480fee51a5d771c08d0e93d68e56f2"
 dependencies = [
  "ahash",
  "crossbeam-channel",
@@ -494,7 +492,7 @@ dependencies = [
  "log",
  "num",
  "owning_ref",
- "time 0.3.9",
+ "time 0.3.11",
  "unicode-segmentation",
  "unicode-width",
  "xi-unicode",
@@ -571,9 +569,9 @@ dependencies = [
 
 [[package]]
 name = "enum-map"
-version = "2.3.0"
+version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1284d66c2ebd284a159491ebc005c6608ef684f4f5db99c960b1837cb74b7067"
+checksum = "6ddfe61e8040145222887d0d32a939c70c8cae681490d72fb868305e9b40ced8"
 dependencies = [
  "enum-map-derive",
 ]
@@ -965,12 +963,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "maplit"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d"
-
-[[package]]
 name = "matchers"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1021,17 +1013,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ncurses"
-version = "5.101.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e2c5d34d72657dc4b638a1c25d40aae81e4f1c699062f72f467237920752032"
-dependencies = [
- "cc",
- "libc",
- "pkg-config",
-]
-
-[[package]]
 name = "nom"
 version = "7.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1067,9 +1048,9 @@ dependencies = [
 
 [[package]]
 name = "num-complex"
-version = "0.4.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97fbc387afefefd5e9e39493299f3069e14a140dd34dc19b4c1c1a8fddb6a790"
+checksum = "7ae39348c8bc5fbd7f40c727a9925f03517afd2ab27d46702108b6a7e5414c19"
 dependencies = [
  "num-traits",
 ]
@@ -1097,9 +1078,9 @@ dependencies = [
 
 [[package]]
 name = "num-rational"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d41702bd167c2df5520b384281bc111a4b5efcf7fbc4c9c222c815b07e0a6a6a"
+checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
  "num-integer",
@@ -1985,16 +1966,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "term_size"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e4129646ca0ed8f45d09b929036bafad5377103edd06e50bf574b353d2b08d9"
-dependencies = [
- "libc",
- "winapi",
-]
-
-[[package]]
 name = "textwrap"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2059,9 +2030,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.9"
+version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2702e08a7a860f005826c6815dcac101b19b5eb330c27fe4a5928fec1d20ddd"
+checksum = "72c91f41dcb2f096c05f0873d667dceec1087ce5bcf984ec8ffb19acddbb3217"
 dependencies = [
  "itoa",
  "libc",
@@ -2111,7 +2082,6 @@ name = "todo_rs"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "crossterm",
  "cursive",
  "entity",
  "migration",
