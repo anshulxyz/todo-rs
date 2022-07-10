@@ -46,5 +46,5 @@ install:
 	cargo build
 
 .PHONY: migrate
-.migrate:
+migrate:
 	$(DATABASE_URL) sea-orm-cli migrate up
