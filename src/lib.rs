@@ -2,7 +2,6 @@ use chrono::{Local, SubsecRound};
 use entity::task;
 use migration::{DbErr, Migrator, MigratorTrait};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Database, DbConn, EntityTrait, QueryFilter, Set};
-use uuid::Uuid;
 
 pub async fn get_db_conn() -> Result<DbConn, DbErr> {
     let database_url =
@@ -17,10 +16,10 @@ pub async fn get_db_conn() -> Result<DbConn, DbErr> {
     Ok(db)
 }
 
-pub async fn create_task(db: &DbConn, title: &str) -> Result<task::Model, DbErr> {
+pub async fn create_task(db: &DbConn, id:String, title: String) -> Result<task::Model, DbErr> {
     let todo = task::ActiveModel {
-        id: Set(Uuid::new_v4().to_owned().to_string()),
-        title: Set(title.to_string()),
+        id: Set(id),
+        title: Set(title),
         created_at: Set(Local::now().round_subsecs(0).format("%F").to_string()),
         ..Default::default()
     };

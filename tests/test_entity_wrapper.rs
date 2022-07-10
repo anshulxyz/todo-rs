@@ -14,13 +14,14 @@ use uuid::Uuid;
 #[tokio::test]
 async fn test_create_task() -> Result<(), DbErr> {
     // given
-    let task_title = "Task Title";
+    let task_title = "Task Title".to_string();
     let db = get_db_conn().await?;
     let count = task::Entity::find().count(&db).await.unwrap_or(0);
     assert_eq!(0, count);
 
     // when
-    let todo = create_task(&db, task_title).await.unwrap();
+    let uuid = Uuid::new_v4().to_string();
+    let todo = create_task(&db, uuid, task_title.to_owned()).await.unwrap();
 
     // then
     assert_eq!(task_title, todo.title);
@@ -140,11 +141,13 @@ async fn test_get_all_done_tasks_for_today() -> Result<(), DbErr> {
 #[tokio::test]
 async fn test_set_and_unset_status_of_task() -> Result<(), DbErr> {
     // given we have a task
-    let task_title = "CHanged task";
+    let task_title = "CHanged task".to_string();
     let db = get_db_conn().await?;
     let count = task::Entity::find().count(&db).await.unwrap_or(0);
     assert_eq!(0, count);
-    let todo = create_task(&db, task_title).await.unwrap();
+
+    let uuid = Uuid::new_v4().to_string();
+    let todo = create_task(&db, uuid, task_title).await.unwrap();
     assert!(todo.finished_at.is_none());
 
     // when we set it's status to done, and then to undone

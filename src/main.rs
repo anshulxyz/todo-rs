@@ -8,6 +8,7 @@ use todo_rs::{
     create_task, get_all_done_tasks_for_today, get_all_undone_tasks, get_db_conn,
     update_task_is_done,
 };
+use uuid::Uuid;
 
 #[tokio::main]
 async fn main() -> Result<(), DbErr> {
@@ -83,18 +84,38 @@ fn show_popup(s: &mut Cursive, todo: &str) {
     if todo.is_empty() {
         s.add_layer(Dialog::info("Please enter a task!"));
     } else {
-        let todo = todo.to_owned();
+        let title = todo.to_owned();
+        let uuid = Uuid::new_v4();
         tokio::spawn(async move {
             let db = get_db_conn()
                 .await
                 .expect("Failed to created database connection for closure");
-            let _todo = create_task(&db, todo.as_str()).await;
+            let _todo = create_task(&db, uuid.to_string().to_owned(), title).await;
         });
         s.pop_layer();
+
+        let mut checkbox = Checkbox::new();
+        checkbox.set_checked(false);
+        checkbox.set_on_change(move |s, checked| {
+            // let moved_db = db;
+            let task_id = uuid.to_string();
+            tokio::spawn(async move {
+                let closure_db = get_db_conn()
+                    .await
+                    .expect("Failed to created database connection for closure");
+                let _todo = update_task_is_done(&closure_db, task_id, checked)
+                    .await
+                    .expect("Failed to change status of the task");
+            });
+            s.add_layer(Dialog::info(format!(
+                "The task was marked: {}",
+                if checked { "DONE" } else { "UNDONE`" }
+            )));
+        });
+        let title = TextView::new(todo.to_string());
+        let linear_layout = LinearLayout::horizontal().child(checkbox).child(title);
         s.add_layer(Dialog::info("Task added to the database"));
         s.call_on_name("LIST", |view: &mut ListView| {
-            let title = TextView::new("SAMPLE TEXT");
-            let linear_layout = LinearLayout::horizontal().child(title);
             view.add_child("-", linear_layout);
         });
     }
