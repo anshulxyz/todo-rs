@@ -1,4 +1,5 @@
-DATABASE_URL = DATABASE_URL='sqlite://tasks.sqlite?mode=rwc'
+include .env
+export
 
 .PHONY: all
 all: format build test
@@ -16,7 +17,7 @@ lint:
 
 .PHONY: build
 build:
-	$(DATABASE_URL) cargo build
+	DATABASE_URL=$(DATABASE_URL) cargo build
 
 
 .PHONY: test
@@ -26,7 +27,7 @@ test:
 
 .PHONY: run
 run:
-	$(DATABASE_URL) cargo run
+	DATABASE_URL=$(DATABASE_URL) cargo run
 
 
 .PHONY: clean
@@ -36,4 +37,5 @@ clean:
 
 .PHONY: migrate
 migrate:
-	$(DATABASE_URL) sea-orm-cli migrate up
+	DATABASE_URL=$(DATABASE_URL) sea-orm-cli migrate up
+
