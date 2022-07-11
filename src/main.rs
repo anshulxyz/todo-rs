@@ -77,6 +77,17 @@ async fn main() -> Result<(), DbErr> {
         s.add_layer(dialog);
     });
 
+    siv.add_global_callback('i', |s| {
+        let dialog = Dialog::new()
+        .title("Info")
+        .padding_lrtb(1, 1, 1, 0)
+        .content(
+            TextView::new("Press 'a' to add task.\nPress 'q' to quit.\nPress 'Enter' on a task to mark it done/undone.")
+        )
+        .dismiss_button("Ok");
+        s.add_layer(dialog);
+    });
+
     siv.run();
 
     Ok(())
