@@ -2,8 +2,6 @@
   <img height="200" src="https://user-images.githubusercontent.com/6121530/178105221-a2128126-c8d2-43f1-9e2d-8a20606d4f24.png">
 </p>
 
-## Demo
-
 ## Why
 
 I was using these note taking apps to write my tasks on the daily-pages. The
@@ -13,7 +11,7 @@ many markdown files.
 
 ## What
 
-A command-line TUI app, that uses SQLite for storing tasks.
+A command-line TUI ToDo app, that uses SQLite for storing tasks.
 
 ## How
 
@@ -53,3 +51,8 @@ make install-deps
 make build
 make test
 ```
+
+## Demo
+
+https://user-images.githubusercontent.com/6121530/178357996-c67a1c3d-72d7-44b8-81c7-2f822925acbf.mp4
+
