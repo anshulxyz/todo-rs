@@ -21,16 +21,10 @@ as an ORM for SQLite.
 
 ## Run
 
-Put the database path in the `.env` file.
-
 ```sh
-# .env
-DATABASE_URL='sqlite://tasks.sqlite?mode=rwc'
-```
-
-Then run the program
-
-```
+git clone https://github.com/anshulxyz/todo-rs/
+cd todo-rs/
+echo "DATABASE_URL='sqlite://tasks.sqlite?mode=rwc'" > .env
 make run
 ```
 
